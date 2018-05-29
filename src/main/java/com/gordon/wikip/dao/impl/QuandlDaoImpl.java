@@ -3,7 +3,7 @@ package com.gordon.wikip.dao.impl;
 import com.gordon.wikip.Constants;
 import com.gordon.wikip.dao.QuandlDao;
 import com.gordon.wikip.model.WikiPriceData;
-import com.gordon.wikip.query.PricesQuery;
+import com.gordon.wikip.params.PricesQueryParams;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.text.StringSubstitutor;
@@ -32,13 +32,13 @@ public class QuandlDaoImpl implements QuandlDao {
 		this.wikiPricesQueryTemplate = wikiPricesQueryTemplate;
 	}
 
-	public List<WikiPriceData> getWikiPrices(PricesQuery query) {
+	public List<WikiPriceData> getWikiPrices(PricesQueryParams query) {
 
 		//Open up a URL Connection
 		URLConnection connection = null;
 		try {
 			connection = buildConnection(query);
-			logger.info("Retrieving data for resource with query parameters {}", query);
+			logger.info("Retrieving data for resource with params parameters {}", query);
 			try(InputStream inputStream = connection.getInputStream();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 				CSVParser records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader)) {
@@ -52,7 +52,8 @@ public class QuandlDaoImpl implements QuandlDao {
 									LocalDate.parse(line.get("date")),
 									new BigDecimal(line.get("open")),
 									new BigDecimal(line.get("high")),
-									new BigDecimal(line.get("low")));
+									new BigDecimal(line.get("low")),
+									new BigDecimal(line.get("close")));
 						})
 						.collect(Collectors.toList());
 
@@ -70,7 +71,7 @@ public class QuandlDaoImpl implements QuandlDao {
 		return Collections.EMPTY_LIST;
 	}
 
-	protected URLConnection buildConnection(PricesQuery query) throws IOException {
+	protected URLConnection buildConnection(PricesQueryParams query) throws IOException {
 		Map<String, String> replacementValues = new HashMap<>();
 		String tickers = query.getTickers().stream().collect(Collectors.joining(","));
 		replacementValues.put(Constants.START_DATE, query.getStartDate().toString());

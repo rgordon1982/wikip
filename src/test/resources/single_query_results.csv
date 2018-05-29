@@ -1,2 +1,2 @@
-ticker,date,open,high,low
-GOOGL,2017-01-05,807.5,813.74,805.92
+ticker,date,open,high,low,close
+GOOGL,2017-01-05,807.5,813.74,805.92,813.02

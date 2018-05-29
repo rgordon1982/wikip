@@ -1,7 +1,7 @@
 package com.gordon.wikip.dao.impl;
 
 import com.gordon.wikip.model.WikiPriceData;
-import com.gordon.wikip.query.PricesQuery;
+import com.gordon.wikip.params.PricesQueryParams;
 import org.junit.Test;
 
 import java.io.FileInputStream;
@@ -45,7 +45,7 @@ public class QuandlDaoImplTest {
 		QuandlDaoImpl quandlDao = new QuandlDaoImpl(template);
 		String startDate = "2018-01-01";
 		String endDate = "2018-01-02";
-		PricesQuery query = PricesQuery.builder()
+		PricesQueryParams query = PricesQueryParams.builder()
 				.ticker("GOOGL")
 				.ticker("BAH")
 				.apiKey("1234")
@@ -63,7 +63,7 @@ public class QuandlDaoImplTest {
 		URLConnection mockConnection = mock(URLConnection.class);
 		InputStream mockInputStream = new FileInputStream(sampleDataFile);
 		when(mockConnection.getInputStream()).thenReturn(mockInputStream);
-		doReturn(mockConnection).when(quandlDao).buildConnection(any(PricesQuery.class));
-		return quandlDao.getWikiPrices(mock(PricesQuery.class));
+		doReturn(mockConnection).when(quandlDao).buildConnection(any(PricesQueryParams.class));
+		return quandlDao.getWikiPrices(mock(PricesQueryParams.class));
 	}
 }

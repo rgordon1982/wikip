@@ -1,4 +1,4 @@
-package com.gordon.wikip.query;
+package com.gordon.wikip.params;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import java.util.Set;
 @EqualsAndHashCode
 @Getter
 @ToString
-public class PricesQuery {
+public class PricesQueryParams {
 
 	@Singular
 	private Set<String> tickers;
