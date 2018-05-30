@@ -1,6 +1,7 @@
 package com.gordon.wikip;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.gordon.wikip.analysis.Analyzer;
 import com.gordon.wikip.analysis.AnalyzerType;
 import com.gordon.wikip.analysis.impl.AvgOpenCloseAnalyzer;
@@ -53,13 +54,13 @@ public class Application {
         return new Report();
       });
 
-      ObjectMapper mapper = new ObjectMapper();
-      mapper.writeValue(System.out, report);
+      ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+      System.out.println("Result: \n"+ mapper.writeValueAsString(report));
 
     } catch (ParseException e) {
       logger.error("Unable to parse command line options", e);
       HelpFormatter formatter = new HelpFormatter();
-      formatter.printHelp( "java -jar data-analyzer.jar", options );
+      formatter.printHelp( "java -jar wikip-1.0-uber.jar", options );
     } catch (IOException e) {
       logger.error("Error accessing configuration",e);
     }

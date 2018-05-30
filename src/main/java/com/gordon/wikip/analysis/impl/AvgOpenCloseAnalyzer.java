@@ -8,7 +8,9 @@ import com.gordon.wikip.model.SecurityReport;
 import com.gordon.wikip.model.WikiPriceData;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -44,10 +46,11 @@ public class AvgOpenCloseAnalyzer extends Analyzer {
 				String month = openCloseEntries.getKey();
 				securityReport.getAvgMonthlyOpenCloses().add(
 						AvgMonthlyOpenClose.builder()
-								.averageOpen(accumulator.totalOpen.divide(numOfRecords).doubleValue())
-								.averageClose(accumulator.totalClose.divide(numOfRecords).doubleValue())
+								.averageOpen(accumulator.totalOpen.divide(numOfRecords, RoundingMode.FLOOR).doubleValue())
+								.averageClose(accumulator.totalClose.divide(numOfRecords, RoundingMode.FLOOR).doubleValue())
 								.month(month)
 								.build());
+				Collections.sort(securityReport.getAvgMonthlyOpenCloses(), (l,r) -> l.getMonth().compareTo(r.getMonth()));
 			}
 		}
 	}
