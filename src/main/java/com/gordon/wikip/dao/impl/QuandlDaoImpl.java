@@ -32,7 +32,7 @@ public class QuandlDaoImpl implements QuandlDao {
 		this.wikiPricesQueryTemplate = wikiPricesQueryTemplate;
 	}
 
-	public List<WikiPriceData> getWikiPrices(PricesQueryParams query) {
+	public Map<String, List<WikiPriceData>> getWikiPrices(PricesQueryParams query) {
 
 		//Open up a URL Connection
 		URLConnection connection = null;
@@ -55,7 +55,7 @@ public class QuandlDaoImpl implements QuandlDao {
 									new BigDecimal(line.get("low")),
 									new BigDecimal(line.get("close")));
 						})
-						.collect(Collectors.toList());
+						.collect(Collectors.groupingBy(wikiData -> wikiData.getTicker()));
 
 			} finally {
 				if(connection != null && connection instanceof HttpURLConnection) {
@@ -68,7 +68,7 @@ public class QuandlDaoImpl implements QuandlDao {
 		}
 
 		//Add to the collection and return
-		return Collections.EMPTY_LIST;
+		return Collections.EMPTY_MAP;
 	}
 
 	protected URLConnection buildConnection(PricesQueryParams query) throws IOException {

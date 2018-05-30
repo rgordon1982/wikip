@@ -1,5 +1,7 @@
 package com.gordon.wikip.analysis.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.gordon.wikip.model.AvgMonthlyOpenClose;
 import com.gordon.wikip.model.Report;
 import com.gordon.wikip.model.SecurityReport;
@@ -21,7 +23,7 @@ public class AvgOpenCloseAnalyzerTest {
 		LocalDate currentDate = LocalDate.parse("2017-02-15");
 
 		Report report = new Report();
-		Map<String, Collection<WikiPriceData>> inputData = new HashMap<>();
+		Map<String, List<WikiPriceData>> inputData = new HashMap<>();
 		inputData.put("GOOGL", generateData("GOOGL" , currentDate));
 		inputData.put("MSFT", generateData("MSFT" , currentDate));
 
@@ -48,7 +50,7 @@ public class AvgOpenCloseAnalyzerTest {
 		assertEquals(100, second.getAverageClose(), 0.0);
 	}
 
-	private Collection<WikiPriceData> generateData(final String ticker, final LocalDate date ) {
+	private List<WikiPriceData> generateData(final String ticker, final LocalDate date ) {
 		List<WikiPriceData> data = new ArrayList<>();
 		IntStream.range(1,5).forEach(i -> {
 			WikiPriceData wpd = new WikiPriceData(

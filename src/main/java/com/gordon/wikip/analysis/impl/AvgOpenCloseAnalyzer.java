@@ -9,6 +9,7 @@ import com.gordon.wikip.model.WikiPriceData;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collector;
@@ -18,9 +19,9 @@ public class AvgOpenCloseAnalyzer implements Analyzer {
 	private static final DateTimeFormatter YEAR_MONTH = DateTimeFormatter.ofPattern("yyyy-MM");
 
 	@Override
-	public void analyze(Map<String, Collection<WikiPriceData>> wikiPriceData, Report report) {
+	public void analyze(Map<String, List<WikiPriceData>> wikiPriceData, Report report) {
 		//Get the average open and close prices across all securities inside of the supplied data
-		for (Map.Entry<String, Collection<WikiPriceData>> entry : wikiPriceData.entrySet()) {
+		for (Map.Entry<String, List<WikiPriceData>> entry : wikiPriceData.entrySet()) {
 			String security = entry.getKey();
 
 			Map<String, Accumulator> accumulatorMap = entry.getValue().stream()

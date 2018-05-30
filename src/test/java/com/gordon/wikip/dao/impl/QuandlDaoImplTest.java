@@ -11,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URLConnection;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -21,9 +22,11 @@ public class QuandlDaoImplTest {
 
 	@Test
 	public void testWikiPricesReturnsAllData() throws IOException{
-		List<WikiPriceData> wikiData = queryForData("src/test/resources/single_query_results.csv");
-		assertEquals(1, wikiData.size());
-		WikiPriceData wikiPriceData = wikiData.get(0);
+		Map<String, List<WikiPriceData>> wikiData = queryForData("src/test/resources/single_query_results.csv");
+		assertTrue(wikiData.containsKey("GOOGL"));
+		assertEquals(1, wikiData.get("GOOGL").size());
+
+		WikiPriceData wikiPriceData = wikiData.get("GOOGL").get(0);
 		assertEquals("GOOGL", wikiPriceData.getTicker());
 		assertEquals("2017-01-05", wikiPriceData.getDate().toString());
 		assertEquals(807.5, wikiPriceData.getOpen().doubleValue(),0.0);
@@ -33,10 +36,11 @@ public class QuandlDaoImplTest {
 
 	@Test
 	public void testWikiPricesAreCorrectlyParsed() throws IOException{
-		List<WikiPriceData> wikiData = queryForData("src/test/resources/sample_query_results.csv");
-		assertEquals(36, wikiData.size());
-		assertEquals(18, wikiData.stream().filter(wd -> wd.getTicker().equals("GOOGL")).count());
-		assertEquals(18, wikiData.stream().filter(wd -> wd.getTicker().equals("MSFT")).count());
+		Map<String, List<WikiPriceData>> wikiData = queryForData("src/test/resources/sample_query_results.csv");
+		assertTrue(wikiData.containsKey("GOOGL"));
+		assertTrue(wikiData.containsKey("MSFT"));
+		assertEquals(18, wikiData.get("GOOGL").size());
+		assertEquals(18, wikiData.get("MSFT").size());
 	}
 
 	@Test
@@ -58,7 +62,7 @@ public class QuandlDaoImplTest {
 		assertEquals("http://www.test.com?GOOGL,BAH&2018-01-01&2018-01-02&1234", materializedUrl);
 	}
 
-	private List<WikiPriceData> queryForData(String sampleDataFile) throws IOException {
+	private Map<String, List<WikiPriceData>> queryForData(String sampleDataFile) throws IOException {
 		QuandlDaoImpl quandlDao = spy(new QuandlDaoImpl(""));
 		URLConnection mockConnection = mock(URLConnection.class);
 		InputStream mockInputStream = new FileInputStream(sampleDataFile);
