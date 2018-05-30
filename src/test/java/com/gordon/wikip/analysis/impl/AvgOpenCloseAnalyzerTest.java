@@ -1,7 +1,5 @@
 package com.gordon.wikip.analysis.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.gordon.wikip.model.AvgMonthlyOpenClose;
 import com.gordon.wikip.model.Report;
 import com.gordon.wikip.model.SecurityReport;
@@ -35,8 +33,8 @@ public class AvgOpenCloseAnalyzerTest {
 	}
 
 	private void verifyReportForSecurity(Report report, String security) {
-		assertTrue(report.getSecurityReports().containsKey("GOOGL"));
-		SecurityReport googleSecurityReport = report.getSecurityReports().get("GOOGL");
+		assertTrue(report.getSecurityReports().containsKey(security));
+		SecurityReport googleSecurityReport = report.getSecurityReports().get(security);
 		assertEquals(2, googleSecurityReport.getAvgMonthlyOpenCloses().size());
 		AvgMonthlyOpenClose first = googleSecurityReport.getAvgMonthlyOpenCloses().get(0);
 

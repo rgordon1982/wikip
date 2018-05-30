@@ -10,4 +10,5 @@ public class SecurityReport {
 
 	@NonNull
 	private List<AvgMonthlyOpenClose> avgMonthlyOpenCloses = new ArrayList<>();
+	private MaxDailyProfit maxDailyProfit;
 }

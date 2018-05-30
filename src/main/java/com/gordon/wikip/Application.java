@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.gordon.wikip.analysis.Analyzer;
 import com.gordon.wikip.analysis.AnalyzerType;
 import com.gordon.wikip.analysis.impl.AvgOpenCloseAnalyzer;
+import com.gordon.wikip.analysis.impl.MaxDailyProfitAnalyzer;
 import com.gordon.wikip.dao.QuandlDao;
 import com.gordon.wikip.dao.impl.QuandlDaoImpl;
 import com.gordon.wikip.model.Report;
@@ -16,6 +17,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class Application {
@@ -36,14 +39,33 @@ public class Application {
       ReportRequestParams.ReportRequestParamsBuilder requestParamsBuilder = ReportRequestParams.builder();
       requestParamsBuilder.apiKey(props.getProperty("query.wiki.apikey"));
       requestParamsBuilder.analyzer(AnalyzerType.AVG_MONTHLY_OPEN_CLOSE);
-      requestParamsBuilder
-              .ticker("GOOGL")
-              .ticker("MSFT")
-              .ticker("COF");
+      requestParamsBuilder.tickers(Arrays.asList("GOOGL", "MSFT", "COF")); //Default stocks to query for
+
+      if(cmd.hasOption("ticker")) {
+        requestParamsBuilder.clearTickers();
+        for(String ticker : cmd.getOptionValues("ticker")) {
+          requestParamsBuilder.ticker(ticker);
+        }
+      }
+
+      if(cmd.hasOption("startDate")) {
+        requestParamsBuilder.startDate(LocalDate.parse(cmd.getOptionValue("startDate")));
+      }
+
+      if(cmd.hasOption("endDate")) {
+        requestParamsBuilder.endDate(LocalDate.parse(cmd.getOptionValue("endDate")));
+      }
+
+      //Add extra Analyzers
+      if(cmd.hasOption("maxDailyProfit")) {
+        requestParamsBuilder.analyzer(AnalyzerType.MAX_DAILY_PROFIT);
+      }
 
       //Construct and wire our classes
       QuandlDao quandlDao = new QuandlDaoImpl(props.getProperty("query.wiki.prices"));
-      List<Analyzer> analyzers = Arrays.asList(new AvgOpenCloseAnalyzer());
+      List<Analyzer> analyzers = Arrays.asList(
+              new AvgOpenCloseAnalyzer(),
+              new MaxDailyProfitAnalyzer());
 
       ReportRequestParams requestParams = requestParamsBuilder.build();
       AnalysisService analysisService = new AnalysisServiceImpl(quandlDao, analyzers);
@@ -54,15 +76,19 @@ public class Application {
         return new Report();
       });
 
-      ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+      ObjectMapper mapper = new ObjectMapper();
+      mapper.enable(SerializationFeature.INDENT_OUTPUT);
+      mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
       System.out.println("Result: \n"+ mapper.writeValueAsString(report));
 
     } catch (ParseException e) {
-      logger.error("Unable to parse command line options", e);
+      logger.debug("Unable to parse command line options", e);
       HelpFormatter formatter = new HelpFormatter();
       formatter.printHelp( "java -jar wikip-1.0-uber.jar", options );
     } catch (IOException e) {
       logger.error("Error accessing configuration",e);
+    } catch (DateTimeParseException e) {
+      logger.error("Unable to parse date", e);
     }
 
   }
@@ -71,7 +97,28 @@ public class Application {
     Options options = new Options();
     //Analyzers
     options
-            .addOption("maxDailyProfit", "Displays the date of maximum profit if purchased at the day's low and sold at the days high for each security");
+            .addOption("maxDailyProfit", "Flag indicating to display the date of maximum profit if purchased at the day's low and sold at the days high for each security");
+
+    //Configs
+    Option tickers = Option.builder("ticker")
+            .argName("stock ticker symbol")
+            .desc("Specifies a Stock Ticker to include in the Report")
+            .hasArgs()
+            .build();
+    Option startDate = Option.builder("startDate")
+            .argName("ISO-8601 Date")
+            .desc("The start date of the query range (inclusive). Example: 2017-01-01")
+            .hasArg()
+            .build();
+    Option endDate = Option.builder("endDate")
+            .argName("ISO-8601 Date")
+            .desc("The end date of the query range (inclusive). Example: 2017-06-01")
+            .hasArg()
+            .build();
+    options.addOption(tickers);
+    options.addOption(startDate);
+    options.addOption(endDate);
+
     return options;
   }
 }
