@@ -9,7 +9,7 @@ The project is written in Java 8 and built using Apache Maven 3.3.9 (although ea
 # Executing
 The projects runs as an executable Java Jar file. After the build process is complete the Jar file can be found inside of the `target` directory as the file `wikip-1.0-uber.jar`. This uber jar contains all classes and dependencies needed for the application to run. Executing the application is done using the following command:
 
-- `java -jar <path to wikip-1.0-uber.jar> `
+- `java -jar <path to wikip-1.0-uber.jar> <optional command line flags>`
 
 For example, if you are in the root directory of the Git project and have built the application via Maven, then the following command will run the application:
 
