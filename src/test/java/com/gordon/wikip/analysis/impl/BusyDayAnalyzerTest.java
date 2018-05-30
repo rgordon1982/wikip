@@ -11,22 +11,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-public class MaxDailyProfitAnalyzerTest {
+public class BusyDayAnalyzerTest {
 
 	@Test
-	public void testMaxDailyProfitIsCalculatedForReport() {
+	public void testBusyDaysIsCalculatedForReport() {
 		LocalDate date = LocalDate.parse("2017-01-01");
 		Map<String, List<WikiPriceData>> inputData = new HashMap<>();
 		inputData.put("GOOGL", generateData("GOOGL" , date));
 		inputData.put("MSFT", generateData("MSFT" , date));
 
 		Report report = new Report();
-		MaxDailyProfitAnalyzer maxDailyProfitAnalyzer = new MaxDailyProfitAnalyzer();
-		maxDailyProfitAnalyzer.analyze(inputData, report);
+		BusyDayAnalyzer busyDayAnalyzer = new BusyDayAnalyzer(1.1);
+		busyDayAnalyzer.analyze(inputData, report);
 
 		verifyReportForSecurity(report, "GOOGL");
 		verifyReportForSecurity(report, "MSFT");
@@ -34,25 +32,31 @@ public class MaxDailyProfitAnalyzerTest {
 
 	private void verifyReportForSecurity(Report report, String security) {
 		assertTrue(report.getSecurityReports().containsKey(security));
-		SecurityReport googleSecurityReport = report.getSecurityReports().get(security);
+		SecurityReport securityReport = report.getSecurityReports().get(security);
 
-		MaxDailyProfit maxDailyProfit = googleSecurityReport.getMaxDailyProfit();
-		assertNotNull(maxDailyProfit);
-		assertEquals(LocalDate.parse("2017-01-05"), maxDailyProfit.getDate());
-		assertEquals(13, maxDailyProfit.getProfit(), 0.0);
+		BusyDays busyDays = securityReport.getBusyDays();
+		assertNotNull(busyDays);
+		assertEquals(14.5, busyDays.getAverageVolume(), 0.0);
+		assertEquals(2, busyDays.getBusyDays().size());
+		assertEquals("2017-01-01", busyDays.getBusyDays().get(0).getDate().toString());
+		assertEquals("2017-01-11", busyDays.getBusyDays().get(1).getDate().toString());
+
+		for(BusyDay bd : busyDays.getBusyDays()) {
+			assertEquals(100, bd.getVolume(),0.0);
+		}
 	}
 
 	private List<WikiPriceData> generateData(final String ticker, final LocalDate date ) {
 		List<WikiPriceData> data = new ArrayList<>();
-		IntStream.range(0,5).forEach(i -> {
+		IntStream.range(0,20).forEach(i -> {
 			WikiPriceData wpd = new WikiPriceData(
 					ticker,
 					date.plusDays(i),
-					new BigDecimal(20),
-					new BigDecimal((20+i)), //increase the high
-					new BigDecimal((15-i)), //decrease the low; biggest gap will be when i=4, which equals 24-11=13
-					new BigDecimal(15),
-					BigDecimal.ZERO);
+					BigDecimal.ZERO,
+					BigDecimal.ZERO,
+					BigDecimal.ZERO,
+					BigDecimal.ZERO,
+					new BigDecimal(i % 10 == 0 ? 100 : 5));//Produces outliers in regards to volume when i is 0, 10 20, etc...
 			data.add(wpd);
 		});
 

@@ -57,7 +57,8 @@ public class AvgOpenCloseAnalyzerTest {
 					new BigDecimal(50),
 					BigDecimal.ZERO,
 					BigDecimal.ZERO,
-					new BigDecimal(100));
+					new BigDecimal(100),
+					BigDecimal.ZERO);
 			data.add(wpd);
 		});
 
@@ -68,7 +69,8 @@ public class AvgOpenCloseAnalyzerTest {
 					new BigDecimal(50),
 					BigDecimal.ZERO,
 					BigDecimal.ZERO,
-					new BigDecimal(100));
+					new BigDecimal(100),
+					BigDecimal.ZERO);
 			data.add(wpd);
 		});
 

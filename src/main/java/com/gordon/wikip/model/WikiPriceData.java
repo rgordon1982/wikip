@@ -16,4 +16,5 @@ public class WikiPriceData {
 	private final BigDecimal high;
 	private final BigDecimal low;
 	private final BigDecimal close;
+	private final BigDecimal volume;
 }

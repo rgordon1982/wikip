@@ -7,6 +7,7 @@ import com.gordon.wikip.analysis.Analyzer;
 import com.gordon.wikip.analysis.AnalyzerType;
 import com.gordon.wikip.analysis.impl.AvgOpenCloseAnalyzer;
 import com.gordon.wikip.analysis.impl.BiggestLoserAnalyzer;
+import com.gordon.wikip.analysis.impl.BusyDayAnalyzer;
 import com.gordon.wikip.analysis.impl.MaxDailyProfitAnalyzer;
 import com.gordon.wikip.dao.QuandlDao;
 import com.gordon.wikip.dao.impl.QuandlDaoImpl;
@@ -67,12 +68,17 @@ public class Application {
       	requestParamsBuilder.analyzer(AnalyzerType.BIGGEST_LOSER);
 	  }
 
+	  if(cmd.hasOption("busyDays")) {
+      	requestParamsBuilder.analyzer(AnalyzerType.BUSY_DAY);
+	  }
+
       //Construct and wire our classes
       QuandlDao quandlDao = new QuandlDaoImpl(props.getProperty("query.wiki.prices"));
       List<Analyzer> analyzers = Arrays.asList(
               new AvgOpenCloseAnalyzer(),
               new MaxDailyProfitAnalyzer(),
-			  new BiggestLoserAnalyzer());
+			  new BiggestLoserAnalyzer(),
+			  new BusyDayAnalyzer(Double.parseDouble(props.getProperty("analyzer.busyday.volume.threshold"))));
 
       ReportRequestParams requestParams = requestParamsBuilder.build();
       AnalysisService analysisService = new AnalysisServiceImpl(quandlDao, analyzers);
@@ -106,6 +112,7 @@ public class Application {
     //Analyzers
     options.addOption("maxDailyProfit", "Flag indicating the report should display the date of maximum profit if purchased at the day's low and sold at the days high for each security");
     options.addOption("biggestLoser", "Flag indicating the report should display which security had the most days where the closing price was lower than the opening price");
+    options.addOption("busyDays", "Flag indicating the report should display which days generated unusually high activity for our securities");
 
     //Configs
     Option tickers = Option.builder("ticker")

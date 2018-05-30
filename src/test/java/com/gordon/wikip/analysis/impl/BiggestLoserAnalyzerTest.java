@@ -41,7 +41,8 @@ public class BiggestLoserAnalyzerTest {
 					new BigDecimal(20),
 					BigDecimal.ZERO,
 					BigDecimal.ZERO,
-					new BigDecimal(15));
+					new BigDecimal(15),
+					BigDecimal.ZERO);
 			data.add(wpd);
 		});
 

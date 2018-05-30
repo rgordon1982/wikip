@@ -53,7 +53,8 @@ public class QuandlDaoImpl implements QuandlDao {
 									new BigDecimal(line.get("open")),
 									new BigDecimal(line.get("high")),
 									new BigDecimal(line.get("low")),
-									new BigDecimal(line.get("close")));
+									new BigDecimal(line.get("close")),
+									new BigDecimal(line.get("volume")));
 						})
 						.collect(Collectors.groupingBy(wikiData -> wikiData.getTicker()));
 

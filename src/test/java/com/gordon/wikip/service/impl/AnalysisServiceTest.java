@@ -26,7 +26,9 @@ public class AnalysisServiceTest {
 		Analyzer mockMaxDailyProfit = mock(Analyzer.class);
 		QuandlDao mockQuandlDao = mock(QuandlDao.class);
 
-		WikiPriceData mockData = new WikiPriceData("", LocalDate.now(), BigDecimal.ZERO,  BigDecimal.ZERO,  BigDecimal.ZERO,  BigDecimal.ZERO);
+		WikiPriceData mockData = new WikiPriceData("", LocalDate.now(), BigDecimal.ZERO,
+				BigDecimal.ZERO,  BigDecimal.ZERO,  BigDecimal.ZERO,
+				BigDecimal.ZERO);
 		Map<String, List<WikiPriceData>> wikiPriceData = new HashMap<>();
 		wikiPriceData.put("GOOGL", Arrays.asList(mockData));
 		when(mockQuandlDao.getWikiPrices(any(PricesQueryParams.class))).thenReturn(wikiPriceData);
