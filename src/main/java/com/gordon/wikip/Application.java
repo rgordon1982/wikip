@@ -1,10 +1,12 @@
 package com.gordon.wikip;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.gordon.wikip.analysis.Analyzer;
 import com.gordon.wikip.analysis.AnalyzerType;
 import com.gordon.wikip.analysis.impl.AvgOpenCloseAnalyzer;
+import com.gordon.wikip.analysis.impl.BiggestLoserAnalyzer;
 import com.gordon.wikip.analysis.impl.MaxDailyProfitAnalyzer;
 import com.gordon.wikip.dao.QuandlDao;
 import com.gordon.wikip.dao.impl.QuandlDaoImpl;
@@ -61,11 +63,16 @@ public class Application {
         requestParamsBuilder.analyzer(AnalyzerType.MAX_DAILY_PROFIT);
       }
 
+      if(cmd.hasOption("biggestLoser")) {
+      	requestParamsBuilder.analyzer(AnalyzerType.BIGGEST_LOSER);
+	  }
+
       //Construct and wire our classes
       QuandlDao quandlDao = new QuandlDaoImpl(props.getProperty("query.wiki.prices"));
       List<Analyzer> analyzers = Arrays.asList(
               new AvgOpenCloseAnalyzer(),
-              new MaxDailyProfitAnalyzer());
+              new MaxDailyProfitAnalyzer(),
+			  new BiggestLoserAnalyzer());
 
       ReportRequestParams requestParams = requestParamsBuilder.build();
       AnalysisService analysisService = new AnalysisServiceImpl(quandlDao, analyzers);
@@ -79,12 +86,13 @@ public class Application {
       ObjectMapper mapper = new ObjectMapper();
       mapper.enable(SerializationFeature.INDENT_OUTPUT);
       mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+      mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
       System.out.println("Result: \n"+ mapper.writeValueAsString(report));
 
     } catch (ParseException e) {
       logger.debug("Unable to parse command line options", e);
       HelpFormatter formatter = new HelpFormatter();
-      formatter.printHelp( "java -jar wikip-1.0-uber.jar", options );
+      formatter.printHelp( "java -jar <path to wikip-1.0-uber.jar> <options>", options );
     } catch (IOException e) {
       logger.error("Error accessing configuration",e);
     } catch (DateTimeParseException e) {
@@ -96,8 +104,8 @@ public class Application {
   private static Options buildCliOptions() {
     Options options = new Options();
     //Analyzers
-    options
-            .addOption("maxDailyProfit", "Flag indicating to display the date of maximum profit if purchased at the day's low and sold at the days high for each security");
+    options.addOption("maxDailyProfit", "Flag indicating the report should display the date of maximum profit if purchased at the day's low and sold at the days high for each security");
+    options.addOption("biggestLoser", "Flag indicating the report should display which security had the most days where the closing price was lower than the opening price");
 
     //Configs
     Option tickers = Option.builder("ticker")
