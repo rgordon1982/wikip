@@ -20,7 +20,7 @@ public class ReportRequestParams {
     private final LocalDate startDate = LocalDate.parse("2017-01-01");
     @NonNull
     @Builder.Default
-    private final LocalDate endDate = LocalDate.parse("2017-06-01");
+    private final LocalDate endDate = LocalDate.parse("2017-06-30");
     @Singular
     private Set<AnalyzerType> analyzers;
 }
