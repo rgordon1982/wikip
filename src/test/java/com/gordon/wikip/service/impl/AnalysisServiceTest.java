@@ -31,11 +31,13 @@ public class AnalysisServiceTest {
 		wikiPriceData.put("GOOGL", Arrays.asList(mockData));
 		when(mockQuandlDao.getWikiPrices(any(PricesQueryParams.class))).thenReturn(wikiPriceData);
 
-		Map<AnalyzerType, Analyzer> analyzerMap = new HashMap<>();
-		analyzerMap.put(AnalyzerType.AVG_MONTHLY_OPEN_CLOSE, mockAvgOpenCloseAnalyzer);
-		analyzerMap.put(AnalyzerType.MAX_DAILY_PROFIT, mockMaxDailyProfit);
+		List<Analyzer> analyzers = new ArrayList<>();
+		analyzers.add(mockAvgOpenCloseAnalyzer);
+		analyzers.add(mockMaxDailyProfit);
+		when(mockAvgOpenCloseAnalyzer.getAnalyzerType()).thenReturn(AnalyzerType.AVG_MONTHLY_OPEN_CLOSE);
+		when(mockMaxDailyProfit.getAnalyzerType()).thenReturn(AnalyzerType.MAX_DAILY_PROFIT);
 
-		AnalysisService analysisService = new AnalysisServiceImpl(mockQuandlDao, analyzerMap);
+		AnalysisService analysisService = new AnalysisServiceImpl(mockQuandlDao, analyzers);
 
 		LocalDate now = LocalDate.now();
 		ReportRequestParams requestParams = ReportRequestParams.builder()
@@ -50,6 +52,6 @@ public class AnalysisServiceTest {
 		Optional<Report> reportOptional = analysisService.performAnalysis(requestParams);
 		Assert.assertTrue(reportOptional.isPresent());
 		verify(mockAvgOpenCloseAnalyzer, times(1)).analyze(anyMap(), any(Report.class));
-		verifyZeroInteractions(mockMaxDailyProfit);
+		verify(mockMaxDailyProfit, never()).analyze(anyMap(), any(Report.class));
 	}
 }

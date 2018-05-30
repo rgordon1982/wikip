@@ -16,9 +16,11 @@ public class ReportRequestParams {
 	@NonNull
 	private String apiKey;
 	@NonNull
-	private LocalDate startDate;
+	@Builder.Default
+	private final LocalDate startDate = LocalDate.parse("2017-01-01");
 	@NonNull
-	private LocalDate endDate;
+	@Builder.Default
+	private final LocalDate endDate = LocalDate.parse("2017-06-01");
 	@Singular
 	private Set<AnalyzerType> analyzers;
 }

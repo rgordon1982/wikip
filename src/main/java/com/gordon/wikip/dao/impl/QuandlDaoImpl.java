@@ -44,7 +44,7 @@ public class QuandlDaoImpl implements QuandlDao {
 				CSVParser records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader)) {
 
 				//Read the data into a BufferedReader, parsing the results into WikiPriceData
-				return StreamSupport.stream(records.spliterator(), false)
+				Map<String, List<WikiPriceData>> result = StreamSupport.stream(records.spliterator(), false)
 						.map(line -> {
 							//parse and return a model
 							return new WikiPriceData(
@@ -56,6 +56,16 @@ public class QuandlDaoImpl implements QuandlDao {
 									new BigDecimal(line.get("close")));
 						})
 						.collect(Collectors.groupingBy(wikiData -> wikiData.getTicker()));
+
+				if(logger.isDebugEnabled()) {
+					int count = 0;
+					for(List<WikiPriceData> l : result.values()) {
+						count += l.size();
+					}
+					logger.debug("Retrieved {} total records across the following securities: {}", count, result.keySet());
+				}
+
+				return result;
 
 			} finally {
 				if(connection != null && connection instanceof HttpURLConnection) {
@@ -80,8 +90,11 @@ public class QuandlDaoImpl implements QuandlDao {
 		replacementValues.put(Constants.API_KEY, query.getApiKey());
 		StringSubstitutor substitutor = new StringSubstitutor(replacementValues);
 
+		String queryUrl = substitutor.replace(wikiPricesQueryTemplate);
+		logger.debug("Generated Query Url {}", queryUrl);
+
 		HttpURLConnection connection =
-				(HttpURLConnection) URI.create(substitutor.replace(wikiPricesQueryTemplate)).toURL().openConnection();
+				(HttpURLConnection) URI.create(queryUrl).toURL().openConnection();
 		connection.setRequestMethod("GET");
 		connection.setReadTimeout((int)TimeUnit.SECONDS.toMillis(10));
 		return connection;

@@ -15,15 +15,18 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 
 public class AnalysisServiceImpl implements AnalysisService {
-	private static final Logger logger = LogManager.getLogger(QuandlDaoImpl.class);
+	private static final Logger logger = LogManager.getLogger(AnalysisServiceImpl.class);
 	private QuandlDao quandlDao;
 	private Map<AnalyzerType, Analyzer> analyzerMap;
 
-	public AnalysisServiceImpl(QuandlDao quandlDao, Map<AnalyzerType, Analyzer> analyzerMap) {
+	public AnalysisServiceImpl(QuandlDao quandlDao, List<Analyzer> analyzers) {
 		Objects.requireNonNull(quandlDao);
-		Objects.requireNonNull(analyzerMap);
+		Objects.requireNonNull(analyzers);
 		this.quandlDao = quandlDao;
-		this.analyzerMap = analyzerMap;
+		this.analyzerMap = new HashMap<>();
+		for(Analyzer a : analyzers) {
+			this.analyzerMap.put(a.getAnalyzerType(), a);
+		}
 	}
 
 	@Override

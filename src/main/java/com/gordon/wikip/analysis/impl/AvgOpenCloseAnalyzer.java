@@ -1,6 +1,7 @@
 package com.gordon.wikip.analysis.impl;
 
 import com.gordon.wikip.analysis.Analyzer;
+import com.gordon.wikip.analysis.AnalyzerType;
 import com.gordon.wikip.model.AvgMonthlyOpenClose;
 import com.gordon.wikip.model.Report;
 import com.gordon.wikip.model.SecurityReport;
@@ -8,15 +9,18 @@ import com.gordon.wikip.model.WikiPriceData;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-public class AvgOpenCloseAnalyzer implements Analyzer {
+public class AvgOpenCloseAnalyzer extends Analyzer {
 	private static final DateTimeFormatter YEAR_MONTH = DateTimeFormatter.ofPattern("yyyy-MM");
+
+	public AvgOpenCloseAnalyzer() {
+		super(AnalyzerType.AVG_MONTHLY_OPEN_CLOSE);
+	}
 
 	@Override
 	public void analyze(Map<String, List<WikiPriceData>> wikiPriceData, Report report) {
