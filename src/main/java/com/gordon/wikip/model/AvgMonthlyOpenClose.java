@@ -6,7 +6,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class AvgMonthlyOpenClose {
-	private String month;
-	private double averageOpen;
-	private double averageClose;
+    private String month;
+    private double averageOpen;
+    private double averageClose;
 }

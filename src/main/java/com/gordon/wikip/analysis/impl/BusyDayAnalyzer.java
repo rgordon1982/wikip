@@ -11,36 +11,36 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class BusyDayAnalyzer extends Analyzer {
-	private static final Logger logger = LogManager.getLogger(BusyDayAnalyzer.class);
-	private final double busyVolumeLimit;
+    private static final Logger logger = LogManager.getLogger(BusyDayAnalyzer.class);
+    private final double busyVolumeLimit;
 
-	public BusyDayAnalyzer(double busyVolumeLimit) {
-		super(AnalyzerType.BUSY_DAY);
-		this.busyVolumeLimit = busyVolumeLimit;
-	}
+    public BusyDayAnalyzer(double busyVolumeLimit) {
+        super(AnalyzerType.BUSY_DAY);
+        this.busyVolumeLimit = busyVolumeLimit;
+    }
 
-	@Override
-	public void analyze(Map<String, List<WikiPriceData>> wikiPriceData, Report report) {
-		for (Map.Entry<String, List<WikiPriceData>> entry : wikiPriceData.entrySet()) {
-			String security = entry.getKey();
+    @Override
+    public void analyze(Map<String, List<WikiPriceData>> wikiPriceData, Report report) {
+        for (Map.Entry<String, List<WikiPriceData>> entry : wikiPriceData.entrySet()) {
+            String security = entry.getKey();
 
-			double averageVolume = entry.getValue().stream()
-					.map(wpd -> wpd.getVolume())
-					.collect(Collectors.averagingDouble(data -> data.doubleValue()));
-			double volumeThreshold = averageVolume * busyVolumeLimit;
+            double averageVolume = entry.getValue().stream()
+                    .map(wpd -> wpd.getVolume())
+                    .collect(Collectors.averagingDouble(data -> data.doubleValue()));
+            double volumeThreshold = averageVolume * busyVolumeLimit;
 
-			List<WikiPriceData> busyDays = entry.getValue().stream()
-				.filter(wpd -> wpd.getVolume().doubleValue() > volumeThreshold)
-				.collect(Collectors.toList());
+            List<WikiPriceData> busyDays = entry.getValue().stream()
+                    .filter(wpd -> wpd.getVolume().doubleValue() > volumeThreshold)
+                    .collect(Collectors.toList());
 
-			SecurityReport securityReport = report.getSecurityReports().computeIfAbsent(security, k -> new SecurityReport());
-			BusyDays.BusyDaysBuilder busyDaysBuilder = BusyDays.builder()
-					.averageVolume(averageVolume);
-			for(WikiPriceData wpd : busyDays) {
-				busyDaysBuilder.busyDay(new BusyDay(wpd.getDate(), wpd.getVolume().doubleValue()));
-			}
+            SecurityReport securityReport = report.getSecurityReports().computeIfAbsent(security, k -> new SecurityReport());
+            BusyDayDetails.BusyDayDetailsBuilder busyDaysBuilder = BusyDayDetails.builder()
+                    .averageVolume(averageVolume);
+            for (WikiPriceData wpd : busyDays) {
+                busyDaysBuilder.busyDay(new BusyDay(wpd.getDate(), wpd.getVolume().doubleValue()));
+            }
 
-			securityReport.setBusyDays(busyDaysBuilder.build());
-		}
-	}
+            securityReport.setBusyDayDetails(busyDaysBuilder.build());
+        }
+    }
 }

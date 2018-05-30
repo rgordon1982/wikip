@@ -8,8 +8,8 @@ import java.util.List;
 
 @Builder
 @Getter
-public class BusyDays {
-	@Singular
-	private List<BusyDay> busyDays;
-	private final double averageVolume;
+public class BusyDayDetails {
+    @Singular
+    private List<BusyDay> busyDays;
+    private final double averageVolume;
 }

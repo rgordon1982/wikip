@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Data
 public class MaxDailyProfit {
-	@JsonSerialize(using = LocalDateSerializer.class)
-	private final LocalDate date;
-	private final double profit;
+    @JsonSerialize(using = LocalDateSerializer.class)
+    private final LocalDate date;
+    private final double profit;
 }

@@ -11,12 +11,12 @@ import java.util.Set;
 @ToString
 public class PricesQueryParams {
 
-	@Singular
-	private Set<String> tickers;
-	@NonNull
-	private String apiKey;
-	@NonNull
-	private LocalDate startDate;
-	@NonNull
-	private LocalDate endDate;
+    @Singular
+    private Set<String> tickers;
+    @NonNull
+    private String apiKey;
+    @NonNull
+    private LocalDate startDate;
+    @NonNull
+    private LocalDate endDate;
 }

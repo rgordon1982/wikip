@@ -7,6 +7,6 @@ import java.util.Map;
 
 @Data
 public class Report {
-	private Map<String, SecurityReport> securityReports = new HashMap<>();
-	private BiggestLoser biggestLoser;
+    private Map<String, SecurityReport> securityReports = new HashMap<>();
+    private BiggestLoser biggestLoser;
 }

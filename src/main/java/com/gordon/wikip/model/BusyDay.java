@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Data
 public class BusyDay {
-	@JsonSerialize(using = LocalDateSerializer.class)
-	private final LocalDate date;
-	private final double volume;
+    @JsonSerialize(using = LocalDateSerializer.class)
+    private final LocalDate date;
+    private final double volume;
 }

@@ -2,42 +2,43 @@ package com.gordon.wikip.analysis.impl;
 
 import com.gordon.wikip.analysis.Analyzer;
 import com.gordon.wikip.analysis.AnalyzerType;
-import com.gordon.wikip.model.*;
+import com.gordon.wikip.model.BiggestLoser;
+import com.gordon.wikip.model.Report;
+import com.gordon.wikip.model.WikiPriceData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class BiggestLoserAnalyzer extends Analyzer {
-	private static final Logger logger = LogManager.getLogger(BiggestLoserAnalyzer.class);
+    private static final Logger logger = LogManager.getLogger(BiggestLoserAnalyzer.class);
 
-	public BiggestLoserAnalyzer() {
-		super(AnalyzerType.BIGGEST_LOSER);
-	}
+    public BiggestLoserAnalyzer() {
+        super(AnalyzerType.BIGGEST_LOSER);
+    }
 
-	@Override
-	public void analyze(Map<String, List<WikiPriceData>> wikiPriceData, Report report) {
+    @Override
+    public void analyze(Map<String, List<WikiPriceData>> wikiPriceData, Report report) {
 
-		String biggestLosingSecurity = null;
-		long numLosingDays = Long.MIN_VALUE;
+        String biggestLosingSecurity = null;
+        long numLosingDays = Long.MIN_VALUE;
 
-		for (Map.Entry<String, List<WikiPriceData>> entry : wikiPriceData.entrySet()) {
-			String security = entry.getKey();
-			long count = entry.getValue().stream()
-					.filter(wpd -> wpd.getClose().compareTo(wpd.getOpen()) < 0)
-					.count();
+        for (Map.Entry<String, List<WikiPriceData>> entry : wikiPriceData.entrySet()) {
+            String security = entry.getKey();
+            long count = entry.getValue().stream()
+                    .filter(wpd -> wpd.getClose().compareTo(wpd.getOpen()) < 0)
+                    .count();
 
-			if(count > numLosingDays) {
-				numLosingDays = count;
-				biggestLosingSecurity = security;
-			}
-		}
+            if (count > numLosingDays) {
+                numLosingDays = count;
+                biggestLosingSecurity = security;
+            }
+        }
 
-		if(biggestLosingSecurity != null) {
-			BiggestLoser biggestLoser = new BiggestLoser(biggestLosingSecurity, numLosingDays);
-			report.setBiggestLoser(biggestLoser);
-		}
-	}
+        if (biggestLosingSecurity != null) {
+            BiggestLoser biggestLoser = new BiggestLoser(biggestLosingSecurity, numLosingDays);
+            report.setBiggestLoser(biggestLoser);
+        }
+    }
 }

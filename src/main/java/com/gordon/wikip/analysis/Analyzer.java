@@ -12,15 +12,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public abstract class Analyzer {
 
-	private final AnalyzerType analyzerType;
+    private final AnalyzerType analyzerType;
 
-	/**
-	 * Performs an analysis on the supplied WikiPrice Data. Once calculated the findings are inserted
-	 * into the {@link Report}
-	 *
-	 * @param wikiPriceData A mapping of a particular Security to its WikiPriceData
-	 * @param report
-	 */
-	abstract public void analyze(Map<String, List<WikiPriceData>> wikiPriceData, Report report);
+    /**
+     * Performs an analysis on the supplied WikiPrice Data. Once calculated the findings are inserted
+     * into the {@link Report}
+     *
+     * @param wikiPriceData A mapping of a particular Security to its WikiPriceData
+     * @param report
+     */
+    abstract public void analyze(Map<String, List<WikiPriceData>> wikiPriceData, Report report);
 
 }

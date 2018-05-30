@@ -34,7 +34,7 @@ public class BusyDayAnalyzerTest {
 		assertTrue(report.getSecurityReports().containsKey(security));
 		SecurityReport securityReport = report.getSecurityReports().get(security);
 
-		BusyDays busyDays = securityReport.getBusyDays();
+		BusyDayDetails busyDays = securityReport.getBusyDayDetails();
 		assertNotNull(busyDays);
 		assertEquals(14.5, busyDays.getAverageVolume(), 0.0);
 		assertEquals(2, busyDays.getBusyDays().size());
