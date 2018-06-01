@@ -6,6 +6,14 @@ The project is written in Java 8 and built using Apache Maven 3.3.9 (although ea
 
 - `mvn clean package`
 
+## Lombok
+This application uses [Lombok](https://projectlombok.org/) to auto build data objects, builders, etc. When building from Maven Lombok annotions are automatically recognized and corresponding classes generated. If building from an IDE (i.e Eclipse, Intellij), you may need to configure it to recognize and support Lombok through the use of a plugin.
+
+- [Eclipse Setup](https://projectlombok.org/setup/eclipse)
+- [Intellij Setup](https://projectlombok.org/setup/intellij)
+
+Instructions for other IDE's can be found on the Lombok project page.
+
 # Executing
 The projects runs as an executable Java Jar file. After the build process is complete the Jar file can be found inside of the `target` directory as the file `wikip-1.0-uber.jar`. This uber jar contains all classes and dependencies needed for the application to run. Executing the application is done using the following command:
 
